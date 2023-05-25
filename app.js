@@ -155,7 +155,17 @@ function currentMatchingTraits(people) {
             const occupSearchTool = occupationSearchFunction(people);
             return currentMatchingTraits(occupSearchTool);
         case "done":
-            return runSearchAndMenu(people);
+            return currentTraitSearch(people);
+    }
+}
+function currentTraitSearch (people) {
+    const currentMatchingResult = people
+    if (currentMatchingResult.length > 1) {
+        displayPeople('Search Results', currentMatchingResult);
+    }
+    else if (currentMatchingResult.length === 1) {
+        const person = currentMatchingResult[0];
+        mainMenu(person, people);
     }
 }
 
