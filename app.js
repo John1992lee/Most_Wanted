@@ -42,6 +42,7 @@ function searchPeopleDataSet(people) {
         case 'traits':
             //! TODO
             // results = searchByTraits(people);
+            results = searchByTraits(people)
             break;
         default:
             return searchPeopleDataSet(people);
@@ -50,11 +51,112 @@ function searchPeopleDataSet(people) {
     return results;
 }
 
+function recursiveFindFunction (people, array = []) {
+    let subArray = people;
+    array = [people];
+    if (subArray.length === 0) {
+        return array
+    }
+    for (let i = 0; i < subArray.length; i++) {
+        array = array.concat(
+            recursiveFindFunction(subArray[i])
+        );
+    }
+    return array;
+}
+
 function searchById(people) {
     const idToSearchForString = prompt('Please enter the id of the person you are searching for.');
     const idToSearchForInt = parseInt(idToSearchForString);
     const idFilterResults = people.filter(person => person.id === idToSearchForInt);
     return idFilterResults;
+}
+
+function searchByTraits(people) {
+    const traitsToSearchFor = validatedPrompt(`Please enter the traits of the person you are searching for.`, ["gender", "dob", "height", "weight", "eyecolor", "occupation"] );
+    switch (traitsToSearchFor) {
+        case "gender":
+            const genderSearchTool = genderSearchFunction(people);
+            return currentMatchingTraits(genderSearchTool);
+        case "dob":
+            const dobSearchTool = dobSearchFunction(people)
+            return currentMatchingTraits(dobSearchTool);
+        case "height":
+            const heightSearchTool = heightSearchFunction(people);
+            return currentMatchingTraits(heightSearchTool);
+        case "weight":
+            const weightSearchTool = weightSearchFunction(people);
+            return currentMatchingTraits(weightSearchTool);
+        case "eyecolor":
+            const eyeColorTool = eyeColorSearchFunction(people);
+            return currentMatchingTraits(eyeColorTool);
+        case "occupation":
+            const occupSearchTool = occupationSearchFunction(people);
+            return currentMatchingTraits(occupSearchTool);
+    }
+}
+
+function genderSearchFunction (people) {
+    const genderTraits = validatedPrompt(`Please enter the gender of the person you are searching for.`, ["male", "female"])
+    const genderTraitsSearch = people.filter(person => person.gender === genderTraits);
+    return currentMatchingTraits(genderTraitsSearch);
+}
+
+function dobSearchFunction (people) {
+    const dobToSearch = prompt(`Please enter the person date of birth.`);
+    const dobSearchOption = people.filter(person => person.dob === dobToSearch);
+    return currentMatchingTraits(dobSearchOption);    
+}
+function heightSearchFunction (people) {
+    const heightToSearch = prompt(`Please enter the person height.`);
+    const heightSearchForInt = parseInt(heightToSearch)
+    const heightSearchOption = people.filter(person => person.height === heightSearchForInt);
+    return currentMatchingTraits(heightSearchOption)    
+}
+function weightSearchFunction (people) {
+    const weightToSeach = prompt(`Please enter the person weight.`);
+    const weightSearchForInt = parseInt(weightToSeach)
+    const weightSearchOption = people.filter(person => person.weight === weightSearchForInt);
+    return currentMatchingTraits(weightSearchOption)
+}
+function eyeColorSearchFunction (people) {
+    const eyecolorToSearch = validatedPrompt(`Please enter the person eye color.`, ["brown", "black", "hazel", "blue", "green"]);
+    const eyecolorSearchOption = people.filter(person => person.eyeColor === eyecolorToSearch);
+    return currentMatchingTraits(eyecolorSearchOption);
+}
+
+function occupationSearchFunction (people) {
+    const occupationToSearch = validatedPrompt(`Please enter the person occupation.`, ["doctor", "assistant", "politician", "nurse", "landscaper", "programmer", "architect", "student"]);
+    const occupationSearchOption = people.filter(person => person.occupation === occupationToSearch);
+    return currentMatchingTraits(occupationSearchOption);
+}
+
+function currentMatchingTraits(people) {
+    
+    const currentPeopleMatchingTraits = validatedPrompt(`Please choose a trait to search by.\n Current Number of Matching Records: ${people.length}`, [
+        "gender", "dob", "height", "weight", "eyecolor", "occupation", "done"]);
+    switch (currentPeopleMatchingTraits) {
+        case "gender":
+            const genderSearchTool = genderSearchFunction(people);
+            return currentMatchingTraits(genderSearchTool);
+        case "dob":
+            const dobSearchTool = dobSearchFunction(people)
+            return currentMatchingTraits(dobSearchTool);
+        case "height":
+            const heightSearchTool = heightSearchFunction(people);
+            return currentMatchingTraits(heightSearchTool);
+        case "weight":
+            const weightSearchTool = weightSearchFunction(people);
+            return currentMatchingTraits(weightSearchTool);
+        case "eyecolor":
+            const eyeColorTool = eyeColorSearchFunction(people);
+            return currentMatchingTraits(eyeColorTool);
+        case "occupation":
+            const occupSearchTool = occupationSearchFunction(people);
+            return currentMatchingTraits(occupSearchTool);
+        case "done":
+            return runSearchAndMenu(people);
+    }
 }
 
 function searchByName(people) {
@@ -73,6 +175,7 @@ function mainMenu(person, people) {
 
     switch (mainMenuUserActionChoice) {
         case "info":
+            displayPeople(person);
             //! TODO
             // displayPersonInfo(person);
             break;
@@ -80,11 +183,15 @@ function mainMenu(person, people) {
             //! TODO
             // let personFamily = findPersonFamily(person, people);
             // displayPeople('Family', personFamily);
+            let personFamily = findPersonFamily(person, people);
+            displayPeople('Family', personFamily);
             break;
         case "descendants":
             //! TODO
             // let personDescendants = findPersonDescendants(person, people);
             // displayPeople('Descendants', personDescendants);
+            let personDescendants = findPersonDescendants(person, people);
+            displayPeople('Descendants', personDescendants);
             break;
         case "quit":
             return;
